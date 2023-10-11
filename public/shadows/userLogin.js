@@ -249,14 +249,15 @@ class UserLogin extends HTMLElement {
     async actionSignUp() {
         let refSignUpUserName = this.shadow.querySelector('#signUpUserName')
         let refPassword = this.shadow.querySelector('#signUpPassword')
-
+        let refMail = this.shadow.querySelector('#signUpMail')
         // Mostrar la vista
         this.showView('viewSignUpForm', 'loading')
 
         let requestData = {
             callType: 'actionSignUp',
             userName: refSignUpUserName.value,
-            userPassword: refPassword.value
+            userPassword: refPassword.value,
+            userMail: refMail.value
         }
         let resultData = await this.callServer(requestData)
         if (resultData.result == 'OK') {

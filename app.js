@@ -94,8 +94,8 @@ async function ajaxCall (req, res) {
 async function actionCheckUserByToken (objPost) {
   let tokenValue = objPost.token
   // Si troba el token a les dades, retorna el nom d'usuari
-  let user = users.find(u => u.token == tokenValue)
-  if (!user) {
+  let tokenDB = 'SELECT * from user where token='+tokenValue;
+  if (!tokenDB) {
       return {result: 'KO'}
   } else {
       return {result: 'OK', userName: user.userName}
@@ -131,6 +131,7 @@ async function actionLogin (objPost) {
 async function actionSignUp (objPost) {
   let userName = objPost.userName
   let userPassword = objPost.userPassword
+  let userMail = objPost.userMail
   let hash = crypto.createHash('md5').update(userPassword).digest("hex")
   let token = uuidv4()
   let userDB = 'SELECT * from user where name='+userName;
@@ -138,7 +139,8 @@ async function actionSignUp (objPost) {
     return {result: 'KO'}
   } else {
   // Afegir l'usuari a les dades
-    let rst = await db.query('insert into user("name","pwdHash","token") values ("'+userName+'","'+hash+'","'+token+'")')
+  //insert into user(name,pwdHash,token) values('Pau','pau@gmail.com','f688ae26e9cfa3ba6235477831d5122e','1234');
+    let rst = await db.query('insert into user(name,mail,pwdHash,token) values ("'+userName+'","'+userMail+'","'+hash+'","'+token+'")')
     res.send(rst)
     return {result: 'OK', userName: user.userName, token: token}
   }
