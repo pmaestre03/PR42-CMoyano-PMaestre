@@ -104,18 +104,16 @@ async function actionCheckUserByToken (objPost) {
 
 async function actionLogout (objPost) {
   let tokenValue = objPost.token
-  let userName = objPost.userName
   console.log(tokenValue)
-  let nomDB = `SELECT * from user where name= '${userName}'`;
-  rst2 = await db.query(nomDB)
-  console.log(rst2)
   // Si troba el token a les dades, retorna el nom d'usuari
-  let tokenDB = `UPDATE user SET token = '' where name='${userName}'`;
-  rst = await db.query(tokenDB)
-  if (!tokenDB) {
+  let nomDB = `select name from user where name='${tokenValue}'`;
+  rst = await db.query(nomDB)
+  if (rst[0]) {
+    let tokenDB = `UPDATE user SET token = '' where name='${nomDB}'`
+    rst2 = await db.query(tokenDB)
       return {result: 'OK'}
   } else {
-      return {result: 'OK'}
+      return {result: 'KO'}
   }
 }
 
@@ -123,14 +121,15 @@ async function actionLogin (objPost) {
   let userName = objPost.userName
   let userPassword = objPost.userPassword
   let hash = crypto.createHash('md5').update(userPassword).digest("hex")
-  let userDB = `SELECT * from user where name= '${userName}' and pwdHash='${hash}'`;
+  let userDB = `SELECT name from user where name= '${userName}' and pwdHash='${hash}'`;
   rst = await db.query(userDB)
   // Buscar l'usuari a les dades
   if (rst[0]) {
     let token = uuidv4()
-    token = token
+    let updateTokenDB = `UPDATE user SET token = '${token}' where name='${rst[0].name}'`
+    rst2 = await db.query(updateTokenDB)
     return {result: 'OK', userName: userName, token: token}
-      
+    
   } else {
     return {result: 'KO'}
   }
