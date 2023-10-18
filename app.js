@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid')
 const database = require('./utilsMySQL.js')
 const shadowsObj = require('./utilsShadows.js')
 const app = express()
-const port = 3000
+const port = 3003
 
 // Inicialitzar objecte de shadows
 let shadows = new shadowsObj()
@@ -98,14 +98,20 @@ async function actionCheckUserByToken (objPost) {
   if (!tokenDB) {
       return {result: 'KO'}
   } else {
-      return {result: 'OK', userName: user.userName}
+      return {result: 'OK', userName: userName}
   }
 }
 
 async function actionLogout (objPost) {
   let tokenValue = objPost.token
+  let userName = objPost.userName
+  console.log(tokenValue)
+  let nomDB = `SELECT * from user where name= '${userName}'`;
+  rst2 = await db.query(nomDB)
+  console.log(rst2)
   // Si troba el token a les dades, retorna el nom d'usuari
-  let tokenDB = 'SELECT * from user where token='+tokenValue;
+  let tokenDB = `UPDATE user SET token = '' where name='${userName}'`;
+  rst = await db.query(tokenDB)
   if (!tokenDB) {
       return {result: 'OK'}
   } else {
@@ -117,14 +123,16 @@ async function actionLogin (objPost) {
   let userName = objPost.userName
   let userPassword = objPost.userPassword
   let hash = crypto.createHash('md5').update(userPassword).digest("hex")
-  let userDB = 'SELECT * from user where name='+userName+' and pwdHash='+hash;
+  let userDB = `SELECT * from user where name= '${userName}' and pwdHash='${hash}'`;
+  rst = await db.query(userDB)
   // Buscar l'usuari a les dades
-  if (!userDB) {
-      return {result: 'KO'}
-  } else {
+  if (rst[0]) {
     let token = uuidv4()
-    user.token = token
-    return {result: 'OK', userName: user.userName, token: token}
+    token = token
+    return {result: 'OK', userName: userName, token: token}
+      
+  } else {
+    return {result: 'KO'}
   }
 }
 
@@ -134,15 +142,9 @@ async function actionSignUp (objPost) {
   let userMail = objPost.userMail
   let hash = crypto.createHash('md5').update(userPassword).digest("hex")
   let token = uuidv4()
-  let userDB = 'SELECT * from user where name='+userName;
-  if (userDB) {
-    return {result: 'KO'}
-  } else {
+  let userDB = 'SELECT * from user where name='+userName
   // Afegir l'usuari a les dades
-  //insert into user(name,pwdHash,token) values('Pau','pau@gmail.com','f688ae26e9cfa3ba6235477831d5122e','1234');
-    let rst = await db.query('insert into user(name,mail,pwdHash,token) values ("'+userName+'","'+userMail+'","'+hash+'","'+token+'")')
-    res.send(rst)
-    return {result: 'OK', userName: user.userName, token: token}
-  }
-
+  const insertQuery = 'insert into user(name,mail,pwdHash,token) values ("'+userName+'","'+userMail+'","'+hash+'","'+token+'")'
+  db.query(insertQuery)
+  return {result: 'OK', userName: userName, token: token}
 }

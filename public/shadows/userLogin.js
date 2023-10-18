@@ -202,11 +202,13 @@ class UserLogin extends HTMLElement {
         this.showView('viewInfo', 'loading')
 
         // Identificar usuari si hi ha "token" al "LocalStorage"
+        let refUserName = this.shadow.querySelector('#loginUserName')
         let tokenValue = window.localStorage.getItem("token")
         if (tokenValue) {
             let requestData = {
                 callType: 'actionLogout',
-                token: tokenValue
+                token: tokenValue,
+                userName: refUserName.value
             }
             await this.callServer(requestData)
         } 
@@ -261,7 +263,7 @@ class UserLogin extends HTMLElement {
         }
         let resultData = await this.callServer(requestData)
         if (resultData.result == 'OK') {
-            this.setUserInfo(resultData.userName, resultData.token)
+            this.setUserInfo(resultData.userName,resultData.userMail, resultData.token)
             this.showView('viewInfo', 'logged')
         } else {
             // Esborrar el password
