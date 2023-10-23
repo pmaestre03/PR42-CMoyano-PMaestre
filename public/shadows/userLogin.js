@@ -202,13 +202,11 @@ class UserLogin extends HTMLElement {
         this.showView('viewInfo', 'loading')
 
         // Identificar usuari si hi ha "token" al "LocalStorage"
-        let refUserName = this.shadow.querySelector('#loginUserName')
         let tokenValue = window.localStorage.getItem("token")
         if (tokenValue) {
             let requestData = {
                 callType: 'actionLogout',
                 token: tokenValue,
-                userName: refUserName.value
             }
             await this.callServer(requestData)
         } 

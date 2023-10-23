@@ -104,14 +104,13 @@ async function actionCheckUserByToken (objPost) {
 
 async function actionLogout (objPost) {
   let tokenValue = objPost.token
-  console.log(tokenValue)
   // Si troba el token a les dades, retorna el nom d'usuari
-  let nomDB = `select name from user where name='${tokenValue}'`;
+  let nomDB = `select name from user where token='${tokenValue}'`;
   rst = await db.query(nomDB)
   if (rst[0]) {
-    let tokenDB = `UPDATE user SET token = '' where name='${nomDB}'`
+    let tokenDB = `UPDATE user SET token = '' where name="${rst[0].name}"`
     rst2 = await db.query(tokenDB)
-      return {result: 'OK'}
+    return {result: 'OK'}
   } else {
       return {result: 'KO'}
   }
@@ -141,9 +140,8 @@ async function actionSignUp (objPost) {
   let userMail = objPost.userMail
   let hash = crypto.createHash('md5').update(userPassword).digest("hex")
   let token = uuidv4()
-  let userDB = 'SELECT * from user where name='+userName
   // Afegir l'usuari a les dades
-  const insertQuery = 'insert into user(name,mail,pwdHash,token) values ("'+userName+'","'+userMail+'","'+hash+'","'+token+'")'
+  let insertQuery = 'insert into user(name,mail,pwdHash,token) values ("'+userName+'","'+userMail+'","'+hash+'","'+token+'")'
   db.query(insertQuery)
   return {result: 'OK', userName: userName, token: token}
 }
