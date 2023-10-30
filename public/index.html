@@ -1,19 +1,87 @@
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-        <meta http-equiv="Pragma" content="no-cache" />
-        <meta http-equiv="Expires" content="0" />
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <meta name="viewport" content="initial-scale=1, maximum-scale=1">
-        <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i&display=swap" rel="stylesheet">
-        <link href="/style.css" rel="stylesheet">
-        <link rel="stylesheet" href="/style.css">
-        <script src="/script.js" defer></script>
-        <script src="/shadows.js" defer></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta author="text" content="Pau Maestre i Claudia Moyano (2n DAW)">
+        <link rel="shortcut icon" href="" />
+        <title>Gestor de bases de dades web</title>
     </head>
     <body>
-        <user-login></user-login>
+        <header>
+            <h1 class="titolprincipal">Gestor de base de dades web</h1>            
+        </header>
+
+        <h2>Benvingut</h1>
+        <h3>Crear Registro</h3>
+        <form id="crearForm" method="post" action="crear_registro.php">
+            <input type="text" id="nomCrear" name="nom" placeholder="Nom">
+
+            <button type="submit">Crear</button>
+        </form>
+    
+        <h3>Modificar registre (en construcción (c) Claudia S.A.)</h3>
+        <div id="modificarDiv">
+            <p>a</p>
+        </div>
+    
+        <h3>Esborrar registre</h3>
+        <div class="esborrarBBDD">
+            <!-- (!!) Hay que hacer lo de borrar. -->
+            <form id="esborrarForm" method="post" action="">
+                <select id="registroEsborrar" name="registro_id">
+                    <option value="1">Registre</option>
+                    <option value="2">Registre</option>
+                </select>
+        
+                <label for="confirmacionEsborrar">Estàs segur que vols esborrar la fila?</label>
+                <input type="checkbox" id="confirmacionEsborrar" name="confirmacion" required>    
+                
+                <br />
+                <button type="submit" id="deleteButton">Esborrar</button>
+            </form>
+            <script src="script.js"></script>
+        </div>
+
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Lora:wght@500&display=swap');
+            body{
+                padding: 0;
+                margin: 0;
+            }
+
+            header{
+                height: 200px;
+                background-image: url(public/imgs/database.jpg);
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-size: cover;
+            }
+
+            h1{
+                font-size: 30px;
+            }
+
+            h2{
+                font-size: 24px;
+                font-family: 'Lora', serif;
+            }
+
+            h3{
+                font-size: 18px;
+                font-family: 'Lora', serif;
+                font-style: italic;
+                font-weight: 200;
+                color: grey;
+            }
+
+            .esborrarBBDD{
+                padding-bottom: 20px;
+            }
+
+            #deleteButton{
+                margin-top: 20px;
+            }
+        </style>
     </body>
 </html>
