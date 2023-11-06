@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid')
 const database = require('./utilsMySQL.js')
 const shadowsObj = require('./utilsShadows.js')
 const app = express()
-const port = 3003
+const port = 3030
 
 // Inicialitzar objecte de shadows
 let shadows = new shadowsObj()
@@ -82,6 +82,7 @@ async function ajaxCall (req, res) {
       case 'actionLogout':            result = await actionLogout(objPost); break
       case 'actionLogin':             result = await actionLogin(objPost); break
       case 'actionSignUp':            result = await actionSignUp(objPost); break
+      case 'actionDeleteRow':           result = await actionDeleteRow(objPost); break
       default:
           result = {result: 'KO', message: 'Invalid callType'}
           break;
@@ -144,4 +145,11 @@ async function actionSignUp (objPost) {
   let insertQuery = 'insert into user(name,mail,pwdHash,token) values ("'+userName+'","'+userMail+'","'+hash+'","'+token+'")'
   db.query(insertQuery)
   return {result: 'OK', userName: userName, token: token}
+}
+
+async function actionDeleteRow (objPost) {
+  let userName = objPost.userName
+  let deleteUser = 'delete from user where name="'+userName+'")'
+  db.query(deleteUser)
+  return {result: 'OK',userName: userName}
 }
