@@ -1,64 +1,58 @@
-window.addEventListener('load', init)
-async function init () {
+// ———————————————————————————————————————————————
+// Crear el registro.
+// ———————————————————————————————————————————————
+async function crearRegistre(req, res) {
+  const nuevoRegistro = req.body;
+  const sql = 'INSERT INTO user (ID, name, mail, pwdHash, token) VALUES (?, ?, ?, ?, ?)';
+  const values = [nuevoRegistro.columna1, nuevoRegistro.columna2];
 
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error('Error fatal! No s\'ha creat el registre', err);
+      res.status(500).json({ message: 'Error fatal! No s\'ha creat el registre.' });
+    } else {
+      console.log('Registre creat correctament!');
+      res.json({ message: 'Registre creat correctament!' });
+    }
+  });
+}; 
+
+// ———————————————————————————————————————————————
+// Modificar un registro.
+// ———————————————————————————————————————————————
+async function modificarRegistre(params) {
+  const registroId = req.body.id;
+  const datosActualizados = req.body;
+
+  const sql = 'UPDATE user SET ID = ?, name = ?, mail = ?, pwdHash = ?, token = ? WHERE id = ?';
+  const values = [IDactualitzat, nomactualitzat, mailactualitzat, pwdHashactualitzat, tokenactualitzat, registroId];
+
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error('Error fatal! No s\'ha creat el registre', err);
+      res.status(500).json({ message: 'Error a l\'actualitzar el registre!' });
+    } else {
+      console.log('Registre actualitzat correctament!');
+      res.json({ message: 'Registre actualitzat correctament!' });
+    }
+  }); 
 }
 
-async function actionCheckUserByToken(tokenValue) {
+// ———————————————————————————————————————————————
+// Eliminar un registro
+// ———————————————————————————————————————————————
+async function esborrarRegistre(req, res) {
+  const registroId = req.body.id;
+  const sql = 'DELETE FROM user WHERE id = ?';
+  const values = [registroId];
 
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error('Error fatal! No s\'ha creat el registre', err);
+      res.status(500).json({ message: 'Error a l\'esborrar el registre!' });
+    } else {
+      console.log('Registre esborrat correctament!');
+      res.json({ message: 'Registre esborrat correctament!' });
+    }
+  }); 
 }
-/*
-
-async function load(tableName) {
-
-    // Agafar les referències
-    refLoading = document.querySelector('#loading')
-    refResults = document.querySelector('#results')
-
-    // Preparar la visualització
-    refLoading.style.display = 'block'
-    refResults.style.display = 'none'
-
-    // Preparar l'objecte que s'envia al servidor, 
-    // amb la petició de dades de la taula
-    let requestData = {
-        callType: 'tableData',
-        table: tableName,
-        limit: 10
-    }
-    
-    // Fer la petició al servidor
-    let resultData = []
-    try {
-        let result = await fetch('/ajaxCall', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestData)
-        })
-        if (!result.ok) {
-            throw new Error(`Error HTTP: ${result.status}`)
-        }
-        resultData = await result.json()
-    } catch (e) {
-        console.error('Error at "load":', e)
-    }
-
-    // Preparar la visualització
-    refLoading.style.display = 'none'
-    refResults.style.display = 'block'
-
-    // Mostrar les dades rebudes
-    refResults.innerHTML = ''
-    for (row in resultData) {
-        let rowValue = resultData[row]
-        let div = document.createElement('div')
-
-        if (tableName == 'city'  || tableName == 'country') {
-            div.innerHTML = rowValue.Name
-        } else {
-            div.innerHTML = rowValue.Language
-        }
-
-        refResults.appendChild(div)
-    }
-}
-*/

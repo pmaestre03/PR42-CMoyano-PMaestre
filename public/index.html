@@ -12,35 +12,40 @@
             <h1 class="titolprincipal">Gestor de base de dades web</h1>            
         </header>
 
-        <h2>Benvingut</h1>
+        <h2>Benvingut</h2>
         <h3>Crear Registro</h3>
-        <form id="crearForm" method="post" action="crear_registro.php">
-            <input type="text" id="nomCrear" name="nom" placeholder="Nom">
 
-            <button type="submit">Crear</button>
-        </form>
-    
-        <h3>Modificar registre (en construcción (c) Claudia S.A.)</h3>
-        <div id="modificarDiv">
-            <p>a</p>
+        <!-- CREAR FILA. -->
+        <div id="crearFilaDiv">
+            <input type="text" id="crearID" name="ID" placeholder="ID"><br />
+            <input type="text" id="crearNom" name="Nom" placeholder="Nom"><br />
+            <input type="text" id="crearMail" name="Mail" placeholder="Mail"><br />
+            <input type="text" id="crearpwdHash" name="pwdHash" placeholder="pwdHash"><br />
+            <input type="text" id="crearToken" name="Token" placeholder="Token"><br />
+            <button type="submit">Següent</button>
         </div>
     
+        <!-- MODIFICAR FILA. -->
+        <h3>Modificar registre</h3>
+        <div id="modificarFilaDiv">
+            <p>Aquí va el modificar</p>
+        </div>
+
+        <!-- ESBORRAR FILA -->
         <h3>Esborrar registre</h3>
-        <div class="esborrarBBDD">
-            <!-- (!!) Hay que hacer lo de borrar. -->
-            <form id="esborrarForm" method="post" action="">
+        <div class="esborrarFilaDiv">
+            <div class="esborrarSection">
                 <select id="registroEsborrar" name="registro_id">
-                    <option value="1">Registre</option>
-                    <option value="2">Registre</option>
+                    <option value="1">Registre 1</option>
+                    <option value="2">Registre 2</option>
                 </select>
-        
-                <label for="confirmacionEsborrar">Estàs segur que vols esborrar la fila?</label>
-                <input type="checkbox" id="confirmacionEsborrar" name="confirmacion" required>    
-                
-                <br />
-                <button type="submit" id="deleteButton">Esborrar</button>
-            </form>
-            <script src="script.js"></script>
+            </div>
+    
+            <label for="confirmacionEsborrar">Estàs segur que vols esborrar la fila?</label>
+            <input type="checkbox" id="confirmacionEsborrar" name="confirmacion" required>            
+            <br />
+
+            <button type="submit" id="deleteButton">Esborrar</button>
         </div>
 
         <style>
@@ -83,5 +88,7 @@
                 margin-top: 20px;
             }
         </style>
+        <script src="script.js"></script>
+        </script>
     </body>
 </html>

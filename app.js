@@ -176,72 +176,7 @@ async function actionSignUp (objPost) {
   let userPassword = objPost.userPassword
   let hash = crypto.createHash('md5').update(userPassword).digest("hex")
   let token = uuidv4()
-
-  // Afegir l'usuari a les dades.
   let user = {userName: userName, password: hash, token: token}
   users.push(user)
   return {result: 'OK', userName: user.userName, token: token}
 }
-
-// ———————————————————————————————————————————————
-/* EN CONSTRUCCIÓN */
-// ———————————————————————————————————————————————
-
-// ———————————————————————————————————————————————
-// Crear el registro.
-// ———————————————————————————————————————————————
-app.post('/crearRegiste', async (req, res) => {
-  const nuevoRegistro = req.body;
-  const sql = 'INSERT INTO user (ID, name, mail, pwdHash, token) VALUES (?, ?, ?, ?, ?)';
-  const values = [nuevoRegistro.columna1, nuevoRegistro.columna2];
-
-  db.query(sql, values, (err, result) => {
-    if (err) {
-      console.error('Error al crear el registre!', err);
-      res.status(500).json({ message: 'Error al crear el registre' });
-    } else {
-      console.log('Registre creadat correctament!');
-      res.json({ message: 'Registre creat correctament.' });
-    }
-  });
-});
-
-// ———————————————————————————————————————————————
-// Modificar un registro.
-// ———————————————————————————————————————————————
-app.post('/modificarRegistre', async (req, res) => {
-  const registroId = req.body.id;
-  const datosActualizados = req.body;
-
-  const sql = 'UPDATE user SET ID = ?, name = ?, mail = ?, pwdHash = ?, token = ? WHERE id = ?';
-  const values = [IDactualitzat, nomactualitzat, mailactualitzat, pwdHashactualitzat, tokenactualitzat, registroId];
-
-  db.query(sql, values, (err, result) => {
-    if (err) {
-      console.error('Error a l\'actualitzar el registre:', err);
-      res.status(500).json({ message: 'Error a l\'actualitzar el registre!' });
-    } else {
-      console.log('Registre actualitzat correctament!');
-      res.json({ message: 'Registre actualitzat correctament!' });
-    }
-  });
-});
-
-// ———————————————————————————————————————————————
-// Eliminar un registro
-// ———————————————————————————————————————————————
-app.post('/esborrarRegistre', async (req, res) => {
-  const registroId = req.body.id;
-  const sql = 'DELETE FROM user WHERE id = ?';
-  const values = [registroId];
-
-  db.query(sql, values, (err, result) => {
-    if (err) {
-      console.error('Error al eliminar el registro:', err);
-      res.status(500).json({ message: 'Error a l\'esborrar el registre!' });
-    } else {
-      console.log('Registre esborrat correctament!');
-      res.json({ message: 'Registre esborrat correctament!' });
-    }
-  });
-});
