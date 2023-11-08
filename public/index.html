@@ -12,42 +12,53 @@
             <h1 class="titolprincipal">Gestor de base de dades web</h1>            
         </header>
 
-        <h2>Benvingut</h2>
-        <h3>Crear Registro</h3>
+        <div class="container">
+            <h2>Benvingut</h2>
+            <h3>Crear fila</h3>
 
-        <!-- CREAR FILA. -->
-        <div id="crearFilaDiv">
-            <input type="text" id="crearID" name="ID" placeholder="ID"><br />
-            <input type="text" id="crearNom" name="Nom" placeholder="Nom"><br />
-            <input type="text" id="crearMail" name="Mail" placeholder="Mail"><br />
-            <input type="text" id="crearpwdHash" name="pwdHash" placeholder="pwdHash"><br />
-            <input type="text" id="crearToken" name="Token" placeholder="Token"><br />
-            <button type="submit">Següent</button>
-        </div>
-    
-        <!-- MODIFICAR FILA. -->
-        <h3>Modificar registre</h3>
-        <div id="modificarFilaDiv">
-            <p>Aquí va el modificar</p>
-        </div>
-
-        <!-- ESBORRAR FILA -->
-        <h3>Esborrar registre</h3>
-        <div class="esborrarFilaDiv">
-            <div class="esborrarSection">
-                <select id="registroEsborrar" name="registro_id">
-                    <option value="1">Registre 1</option>
-                    <option value="2">Registre 2</option>
-                </select>
+            <!-- CREAR FILA -->
+            <div id="crearFilaDiv">
+                <input type="text" id="crearID" name="ID" placeholder="ID"><br />
+                <input type="text" id="crearNom" name="Nom" placeholder="Nom"><br />
+                <input type="text" id="crearMail" name="Mail" placeholder="Mail"><br />
+                <input type="text" id="crearpwdHash" name="pwdHash" placeholder="pwdHash"><br />
+                <input type="text" id="crearToken" name="Token" placeholder="Token"><br />
+                <button type="submit" id="seguentButton" onclick="crearFila()">Següent</button>
             </div>
-    
-            <label for="confirmacionEsborrar">Estàs segur que vols esborrar la fila?</label>
-            <input type="checkbox" id="confirmacionEsborrar" name="confirmacion" required>            
-            <br />
+        
+            <!-- MODIFICAR FILA -->
+            <div class="modificarFilaDiv">
+                <h3>Modificar Fila</h3>
+                <form id="modificarForm">
+                    <label for="registroModificar">Registre que vols modificar:<br /></label>
+                    <select id="registroModificar" name="registro_id">
+                        <option value="1">Proba1</option>
+                        <option value="2">Proba2</option>
+                    </select>
+                    <br />
+                    <label for="nouValor">Nou valor:<br /></label>
+                    <input type="text" id="nouValor" name="nou_valor" placeholder="Nou valor" required><br />
+                    <button type="submit" id="modificarButton" onclick="modificarFila()">Modificar</button>
+                </form>
+            </div>
 
-            <button type="submit" id="deleteButton">Esborrar</button>
+            <!-- ESBORRAR FILA -->
+            <div class="esborrarFilaDiv">
+                <h3>Esborrar fila</h3>
+                <div class="esborrarSection">
+                    <select id="registroEsborrar" name="registro_id">
+                        <option value="1">Registre 1</option>
+                        <option value="2">Registre 2</option>
+                    </select>
+                </div>
+        
+                <label for="confirmacionEsborrar">Estàs segur que vols esborrar la fila?</label>
+                <input type="checkbox" id="confirmacionEsborrar" name="confirmacion" required>            
+                <br />
+                <button type="submit" id="esborrarButton" onclick=""">Esborrar</button>
+            </div>
         </div>
-
+        
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Lora:wght@500&display=swap');
             body{
@@ -55,16 +66,25 @@
                 margin: 0;
             }
 
-            header{
+            header {
                 height: 200px;
-                background-image: url(public/imgs/database.jpg);
+                background-image: url(./imgs/database.jpg);
                 background-repeat: no-repeat;
                 background-attachment: fixed;
                 background-size: cover;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }       
+
+            header h1{
+                text-align: center;
+                font-size: 30px;
+                color: white;
             }
 
-            h1{
-                font-size: 30px;
+            .container{
+                margin: 50px;
             }
 
             h2{
@@ -80,15 +100,55 @@
                 color: grey;
             }
 
+            #crearFilaDiv input[type="text"], .esborrarSection select, #modificarForm select, #nouValor{
+                padding: 5px;
+                margin-bottom: 5px;
+                border: 1px solid rgb(23, 97, 110);
+                border-radius: 50px;
+            }
+
+            #seguentButton, #esborrarButton, #modificarButton{
+                transition-duration: 1s;
+                cursor: pointer;
+                padding: 5px;
+                margin-top: 5px;
+                background-color: rgb(23, 97, 110);
+                border: 1px solid rgb(23, 97, 110);
+                border-radius: 5px;
+                color: white;
+            }
+
+            #seguentButton:hover, #esborrarButton:hover, #modificarButton:hover{
+                transition-duration: 1s;
+                cursor: pointer;
+                background-color: rgb(176, 203, 207);
+                border: 1px solid rgb(176, 203, 207);
+                border-radius: 5px;
+                color: black;
+            }
+
+            .modificarFilaDiv h3{
+                margin-top: 50px;
+            }
+
+            #modificarForm select, .esborrarSection select{
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+
+            #modificarButton, #nouValor{
+                margin-top: 10px;
+            }
+
+            .esborrarFilaDiv h3{
+                margin-top: 50px;
+            }
+
             .esborrarBBDD{
                 padding-bottom: 20px;
             }
-
-            #deleteButton{
-                margin-top: 20px;
-            }
         </style>
+
         <script src="script.js"></script>
-        </script>
     </body>
 </html>

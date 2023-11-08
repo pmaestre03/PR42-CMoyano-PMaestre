@@ -1,58 +1,117 @@
-// ———————————————————————————————————————————————
-// Crear el registro.
-// ———————————————————————————————————————————————
-async function crearRegistre(req, res) {
-  const nuevoRegistro = req.body;
-  const sql = 'INSERT INTO user (ID, name, mail, pwdHash, token) VALUES (?, ?, ?, ?, ?)';
-  const values = [nuevoRegistro.columna1, nuevoRegistro.columna2];
+// ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// —————————————————————————————————————————————————————————— CREAR FILA ——————————————————————————————————————————————————————————
+// ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.querySelector('form');
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+    const ID = document.getElementById('crearID').value;
+    const Nom = document.getElementById('crearNom').value;
+    const Mail = document.getElementById('crearMail').value;
+    const pwdHash = document.getElementById('crearpwdHash').value;
+    const Token = document.getElementById('crearToken').value;
+    const mysql = require('mysql2');
 
-  db.query(sql, values, (err, result) => {
-    if (err) {
-      console.error('Error fatal! No s\'ha creat el registre', err);
-      res.status(500).json({ message: 'Error fatal! No s\'ha creat el registre.' });
-    } else {
-      console.log('Registre creat correctament!');
-      res.json({ message: 'Registre creat correctament!' });
-    }
+    const connection = mysql.createConnection({
+      host: '',
+      user: '',
+      password: '',
+      database: '',
+    });
+
+    connection.connect((err) => {
+      if (err) {
+        console.error('Error al conectar a la base de datos:', err);
+        return;
+      }
+      console.log('Conexión a la base de datos establecida.');
+
+      // Query SQL para insertar una fila
+      const insertQuery = `INSERT INTO user (ID, name, mail, pwdHash, token) VALUES (?, ?, ?, ?, ?)`;
+      const values = [ID, Nom, Mail, pwdHash, Token];
+
+      connection.query(insertQuery, values, (err, results) => {
+        if (err) {
+          console.error('Error al insertar la fila en la base de datos:', err);
+        } else {
+          console.log('Fila insertada amb èxit a la base de dades.');
+          alert('Fila insertada amb èxit!');
+        }
+        connection.end();
+      });});});
+  const seguenteButton = document.getElementById('seguentButton');
+  seguenteButton.addEventListener('click', function () { crearFila(); });});
+
+// ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// ———————————————————————————————————————————————————————— ESBORRAR FILA —————————————————————————————————————————————————————————
+// ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+document.addEventListener('DOMContentLoaded', function () {
+  const esborrarButton = document.getElementById('esborrarButton');
+  esborrarButton.addEventListener('click', function () {
+    esborrarFila();
   });
-}; 
 
-// ———————————————————————————————————————————————
-// Modificar un registro.
-// ———————————————————————————————————————————————
-async function modificarRegistre(params) {
-  const registroId = req.body.id;
-  const datosActualizados = req.body;
+  function esborrarFila() {
+    const registroEsborrar = document.getElementById('registroEsborrar').value;
+    const confirmacionEsborrar = document.getElementById('confirmacionEsborrar').checked;
 
-  const sql = 'UPDATE user SET ID = ?, name = ?, mail = ?, pwdHash = ?, token = ? WHERE id = ?';
-  const values = [IDactualitzat, nomactualitzat, mailactualitzat, pwdHashactualitzat, tokenactualitzat, registroId];
+    if (confirmacionEsborrar) {
+      const mysql = require('mysql2');
+      const connection = mysql.createConnection({
+        host: '',
+        user: '',
+        password: '',
+        database: '',
+      });
+      connection.connect((err) => {
+        if (err) {
+          console.error('Error al conectar a la base de dades:', err);
+          return;
+        }
+        console.log('Conexió a la base de dades establerta.');
+        const deleteQuery = `DELETE FROM user WHERE ID = ?`;
+        connection.query(deleteQuery, [registroEsborrar], (err, results) => {
+          if (err) {
+            console.error('Error a l\'esborrar la fila de la base de dades:', err);
+          } else {
+            console.log('Fila esborrada amb èxit de la base de dades.');
+            alert('Fila esborrada amb èxit');
+          }
+          connection.end();
+        });});
+    } else { alert('Cal confirmar l\'esborrament seleccionant la casella de verificació.'); }}
+  });
 
-  db.query(sql, values, (err, result) => {
-    if (err) {
-      console.error('Error fatal! No s\'ha creat el registre', err);
-      res.status(500).json({ message: 'Error a l\'actualitzar el registre!' });
-    } else {
-      console.log('Registre actualitzat correctament!');
-      res.json({ message: 'Registre actualitzat correctament!' });
-    }
-  }); 
-}
+// ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+// ———————————————————————————————————————————————————————— MODIFICAR FILA ————————————————————————————————————————————————————————
+// ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+document.addEventListener('DOMContentLoaded', function () {
+  const modificarButton = document.getElementById('modificarButton');
+  modificarButton.addEventListener('click', function () {
+    modificarFila();
+  });
 
-// ———————————————————————————————————————————————
-// Eliminar un registro
-// ———————————————————————————————————————————————
-async function esborrarRegistre(req, res) {
-  const registroId = req.body.id;
-  const sql = 'DELETE FROM user WHERE id = ?';
-  const values = [registroId];
-
-  db.query(sql, values, (err, result) => {
-    if (err) {
-      console.error('Error fatal! No s\'ha creat el registre', err);
-      res.status(500).json({ message: 'Error a l\'esborrar el registre!' });
-    } else {
-      console.log('Registre esborrat correctament!');
-      res.json({ message: 'Registre esborrat correctament!' });
-    }
-  }); 
-}
+  function modificarFila() {
+    const nouValor = document.getElementById('nouValor').value;
+    const registroModificar = document.getElementById('registroModificar').value;
+    const mysql = require('mysql2');
+    const connection = mysql.createConnection({
+      host: '',
+      user: '',
+      password: '',
+      database: '',
+    });
+    connection.connect((err) => {
+      if (err) {
+        console.error('Error al conectar a la base de dades:', err);
+        return;
+      }
+      console.log('Conexió a la base de dades establerta.');
+      const updateQuery = `UPDATE user SET name = ? WHERE ID = ?`;
+      connection.query(updateQuery, [nouValor, registroModificar], (err, results) => {
+        if (err) {
+          console.error('Error al modificar la fila a la base de dades:', err);
+        } else {
+          console.log('Fila esborrada amb èxit de la base de dades.');
+          alert('Fila modificada amb èxito');
+        } connection.end(); });});}});
