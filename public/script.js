@@ -1,7 +1,7 @@
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // —————————————————————————————————————————————————————————— CREAR FILA ——————————————————————————————————————————————————————————
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-document.addEventListener('DOMContentLoaded', function () {
+function crearFila() {
   const form = document.querySelector('form');
   form.addEventListener('submit', function (event) {
     event.preventDefault();
@@ -10,14 +10,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const Mail = document.getElementById('crearMail').value;
     const pwdHash = document.getElementById('crearpwdHash').value;
     const Token = document.getElementById('crearToken').value;
-    const mysql = require('mysql2');
-
-    const connection = mysql.createConnection({
-      host: '',
-      user: '',
-      password: '',
-      database: '',
-    });
 
     connection.connect((err) => {
       if (err) {
@@ -34,53 +26,47 @@ document.addEventListener('DOMContentLoaded', function () {
         if (err) {
           console.error('Error al insertar la fila en la base de datos:', err);
         } else {
-          console.log('Fila insertada amb èxit a la base de dades.');
-          alert('Fila insertada amb èxit!');
+          console.log('Fila insertada con éxito en la base de datos.');
+          alert('Fila insertada con éxito!');
         }
         connection.end();
-      });});});
-  const seguenteButton = document.getElementById('seguentButton');
-  seguenteButton.addEventListener('click', function () { crearFila(); });});
+      });
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  crearFila();
+});
 
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // ———————————————————————————————————————————————————————— ESBORRAR FILA —————————————————————————————————————————————————————————
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 document.addEventListener('DOMContentLoaded', function () {
-  const esborrarButton = document.getElementById('esborrarButton');
-  esborrarButton.addEventListener('click', function () {
-    esborrarFila();
-  });
+  //const esborrarButton = document.getElementById('esborrarButton');
 
   function esborrarFila() {
     const registroEsborrar = document.getElementById('registroEsborrar').value;
     const confirmacionEsborrar = document.getElementById('confirmacionEsborrar').checked;
-
-    if (confirmacionEsborrar) {
-      const mysql = require('mysql2');
-      const connection = mysql.createConnection({
-        host: '',
-        user: '',
-        password: '',
-        database: '',
-      });
-      connection.connect((err) => {
+    connection.connect((err) => {
         if (err) {
           console.error('Error al conectar a la base de dades:', err);
           return;
         }
         console.log('Conexió a la base de dades establerta.');
-        const deleteQuery = `DELETE FROM user WHERE ID = ?`;
-        connection.query(deleteQuery, [registroEsborrar], (err, results) => {
-          if (err) {
-            console.error('Error a l\'esborrar la fila de la base de dades:', err);
-          } else {
-            console.log('Fila esborrada amb èxit de la base de dades.');
-            alert('Fila esborrada amb èxit');
-          }
-          connection.end();
-        });});
-    } else { alert('Cal confirmar l\'esborrament seleccionant la casella de verificació.'); }}
-  });
+        
+        if (confirmacionEsborrar) {
+          const deleteQuery = `DELETE FROM user WHERE ID = ?`;
+          connection.query(deleteQuery, [registroEsborrar], (err, results) => {
+            if (err) {
+              console.error('Error a l\'esborrar la fila de la base de dades:', err);
+            } else {
+              console.log('Fila esborrada amb èxit de la base de dades.');
+              alert('Fila esborrada amb èxit');
+            }
+            connection.end();
+        })} else { alert('Cal confirmar l\'esborrament seleccionant la casella de verificació.') };
+  })}});
 
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // ———————————————————————————————————————————————————————— MODIFICAR FILA ————————————————————————————————————————————————————————
@@ -94,13 +80,6 @@ document.addEventListener('DOMContentLoaded', function () {
   function modificarFila() {
     const nouValor = document.getElementById('nouValor').value;
     const registroModificar = document.getElementById('registroModificar').value;
-    const mysql = require('mysql2');
-    const connection = mysql.createConnection({
-      host: '',
-      user: '',
-      password: '',
-      database: '',
-    });
     connection.connect((err) => {
       if (err) {
         console.error('Error al conectar a la base de dades:', err);
@@ -114,4 +93,6 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
           console.log('Fila esborrada amb èxit de la base de dades.');
           alert('Fila modificada amb èxito');
-        } connection.end(); });});}});
+        } connection.end(); 
+    })});
+}});

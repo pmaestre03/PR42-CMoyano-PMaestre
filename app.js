@@ -7,7 +7,7 @@ const { v4: uuidv4 } = require('uuid')
 const database = require('./utilsMySQL.js')
 const shadowsObj = require('./utilsShadows.js')
 const app = express()
-const port = 3000
+const port = 8080
 const router = express.Router();
 const path = __dirname + '/public/';
 
