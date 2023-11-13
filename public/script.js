@@ -1,43 +1,26 @@
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // —————————————————————————————————————————————————————————— CREAR FILA ——————————————————————————————————————————————————————————
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-function crearFila() {
-  const form = document.querySelector('form');
-  form.addEventListener('submit', function (event) {
-    event.preventDefault();
-    const ID = document.getElementById('crearID').value;
-    const Nom = document.getElementById('crearNom').value;
-    const Mail = document.getElementById('crearMail').value;
-    const pwdHash = document.getElementById('crearpwdHash').value;
-    const Token = document.getElementById('crearToken').value;
+async function submitForm() {
+  const formData = {
+      ID: document.getElementById('ID').value,
+      name: document.getElementById('name').value,
+      mail: document.getElementById('mail').value,
+      pwdHash: document.getElementById('pwdHash').value,
+      token: document.getElementById('token').value
+  };
 
-    connection.connect((err) => {
-      if (err) {
-        console.error('Error al conectar a la base de datos:', err);
-        return;
-      }
-      console.log('Conexión a la base de datos establecida.');
-
-      // Query SQL para insertar una fila
-      const insertQuery = `INSERT INTO user (ID, name, mail, pwdHash, token) VALUES (?, ?, ?, ?, ?)`;
-      const values = [ID, Nom, Mail, pwdHash, Token];
-
-      connection.query(insertQuery, values, (err, results) => {
-        if (err) {
-          console.error('Error al insertar la fila en la base de datos:', err);
-        } else {
-          console.log('Fila insertada con éxito en la base de datos.');
-          alert('Fila insertada con éxito!');
-        }
-        connection.end();
-      });
-    });
+  const response = await fetch('/submitForm', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
   });
-}
 
-document.addEventListener('DOMContentLoaded', function () {
-  crearFila();
-});
+  const result = await response.json();
+  console.log(result);
+}
 
 // ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
 // ———————————————————————————————————————————————————————— ESBORRAR FILA —————————————————————————————————————————————————————————

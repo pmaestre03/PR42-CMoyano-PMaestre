@@ -12,52 +12,126 @@
             <h1 class="titolprincipal">Gestor de base de dades web</h1>            
         </header>
 
+        <user-login></user-login>
         <div class="container">
             <h2>Benvingut</h2>
             <h3>Crear fila</h3>
 
             <!-- CREAR FILA -->
             <div id="crearFilaDiv">
-                <input type="text" id="crearID" name="ID" placeholder="ID"><br />
-                <input type="text" id="crearNom" name="Nom" placeholder="Nom"><br />
-                <input type="text" id="crearMail" name="Mail" placeholder="Mail"><br />
-                <input type="text" id="crearpwdHash" name="pwdHash" placeholder="pwdHash"><br />
-                <input type="text" id="crearToken" name="Token" placeholder="Token"><br />
-                <button type="submit" id="seguentButton" onclick="crearFila()">Següent</button>
+                <form id="userForm">
+                    <label for="ID">ID:</label>
+                    <input type="text" id="ID" name="ID" required><br>
+                
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required><br>
+                
+                    <label for="mail">Mail:</label>
+                    <input type="text" id="mail" name="mail" required><br>
+                
+                    <label for="pwdHash">Password Hash:</label>
+                    <input type="text" id="pwdHash" name="pwdHash" required><br>
+                
+                    <label for="token">Token:</label>
+                    <input type="text" id="token" name="token" required><br>
+                
+                    <button type="button" onclick="submitForm()">Submit</button>
+                </form>
             </div>
-        
-            <!-- MODIFICAR FILA -->
-            <div class="modificarFilaDiv">
-                <h3>Modificar Fila</h3>
-                <form id="modificarForm">
-                    <label for="registroModificar">Registre que vols modificar:<br /></label>
-                    <select id="registroModificar" name="registro_id">
-                        <option value="1">Proba1</option>
-                        <option value="2">Proba2</option>
-                    </select>
-                    <br />
-                    <label for="nouValor">Nou valor:<br /></label>
-                    <input type="text" id="nouValor" name="nou_valor" placeholder="Nou valor" required><br />
-                    <button type="submit" id="modificarButton" onclick="modificarFila()">Modificar</button>
+                  
+            <div id="esborrarFila">
+                <h3>Esborrar fila</h3>
+                <form id="deleteForm">
+                    <label for="deleteID">ID:</label>
+                    <input type="text" id="deleteID" name="deleteID" required><br>
+                    <p>Segur/a?</p>
+                    <button type="button" onclick="deleteRow()">Delete</button>
                 </form>
             </div>
 
-            <!-- ESBORRAR FILA -->
-            <div class="esborrarFilaDiv">
-                <h3>Esborrar fila</h3>
-                <div class="esborrarSection">
-                    <select id="registroEsborrar" name="registro_id">
-                        <option value="1">Registre 1</option>
-                        <option value="2">Registre 2</option>
-                    </select>
-                </div>
-        
-                <label for="confirmacionEsborrar">Estàs segur que vols esborrar la fila?</label>
-                <input type="checkbox" id="confirmacionEsborrar" name="confirmacion" required>            
-                <br />
-                <button type="submit" id="esborrarButton" onclick=""">Esborrar</button>
+            <div id="editarFila">
+                <h3>Editar fila</h3>
+                <form id="editForm">
+                    <label for="editID">ID:</label>
+                    <input type="text" id="editID" name="editID" required><br>
+                
+                    <label for="editName">Name:</label>
+                    <input type="text" id="editName" name="editName" required><br>
+                
+                    <label for="editMail">Mail:</label>
+                    <input type="text" id="editMail" name="editMail" required><br>
+                
+                    <label for="editPwdHash">Password Hash:</label>
+                    <input type="text" id="editPwdHash" name="editPwdHash" required><br>
+                
+                    <label for="editToken">Token:</label>
+                    <input type="text" id="editToken" name="editToken" required><br>
+                
+                    <button type="button" onclick="editRow()">Edit</button>
+                  </form>
             </div>
-        </div>
+                
+            <script>
+            function submitForm() {
+                var form = document.getElementById("userForm");
+                var formData = new FormData(form);
+
+                fetch('/submitForm', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(Object.fromEntries(formData)),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        form.reset();
+                    })
+                .catch(error => console.error('Error:', error));
+            }
+
+            // BORRAR FILA
+            function deleteRow() {
+                var deleteID = document.getElementById("deleteID").value;
+
+                fetch('/deleteUser', {
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ ID: deleteID }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    document.getElementById("deleteForm").reset();
+                })
+                .catch(error => console.error('Error:', error));
+            }
+
+            function editRow() {
+                var editID = document.getElementById("editID").value;
+                var editName = document.getElementById("editName").value;
+                var editMail = document.getElementById("editMail").value;
+                var editPwdHash = document.getElementById("editPwdHash").value;
+                var editToken = document.getElementById("editToken").value;
+
+                fetch('/editUser', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ ID: editID, name: editName, mail: editMail, pwdHash: editPwdHash, token: editToken }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        document.getElementById("editForm").reset();
+                    })
+                .catch(error => console.error('Error:', error));
+            }
+        </script>                
         
         <style>
             @import url('https://fonts.googleapis.com/css2?family=Lora:wght@500&display=swap');

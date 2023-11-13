@@ -180,3 +180,57 @@ async function actionSignUp (objPost) {
   users.push(user)
   return {result: 'OK', userName: user.userName, token: token}
 }
+
+// AÑADIR FILA.
+// Asegúrate de que esta ruta esté en tu archivo app.js
+app.post('/submitForm', submitForm);
+async function submitForm(req, res) {
+  let formData = req.body;
+  let query = `INSERT INTO user (ID, name, mail, pwdHash, token) VALUES (?, ?, ?, ?, ?)`;
+  let values = [formData.ID, formData.name, formData.mail, formData.pwdHash, formData.token];
+
+  try {
+    await db.query(query, values);
+    res.send({ result: 'OK', message: 'Has creado una nueva fila.' });
+  } catch (error) {
+    console.error('Error al crear la fila en la base de datos:', error);
+    res.send({ result: 'KO', message: 'Error al crear la fila en la base de datos.' });
+  }
+}
+
+// BORRAR FILA.
+app.post('/deleteUser', deleteRow);
+async function deleteRow(req, res) {
+  let deleteID = req.body.ID;
+
+  let query = `DELETE FROM user WHERE ID = ?`;
+
+  try {
+    await db.query(query, [deleteID]);
+    res.send({ result: 'OK', message: 'Se ha eliminado la fila correctamente.' });
+  } catch (error) {
+    console.error('Error al eliminar la fila de la base de datos:', error);
+    res.send({ result: 'KO', message: 'Error al eliminar la fila de la base de datos.' });
+  }
+}
+
+// EDITAR FILA.
+app.post('/editUser', editRow);
+async function editRow(req, res) {
+  let editID = req.body.ID;
+  let editName = req.body.name;
+  let editMail = req.body.mail;
+  let editPwdHash = req.body.pwdHash;
+  let editToken = req.body.token;
+
+  let query = `UPDATE user SET name=?, mail=?, pwdHash=?, token=? WHERE ID = ?`;
+
+  try {
+    await db.query(query, [editName, editMail, editPwdHash, editToken, editID]);
+    res.send({ result: 'OK', message: 'Se ha editado la fila correctamente.' });
+  } catch (error) {
+    console.error('Error al editar la fila en la base de datos:', error);
+    res.send({ result: 'KO', message: 'Error al editar la fila en la base de datos.' });
+  }
+}
+
