@@ -7,7 +7,7 @@ const { v4: uuidv4 } = require('uuid')
 const database = require('./utilsMySQL.js')
 const shadowsObj = require('./utilsShadows.js')
 const app = express()
-const port = 8080
+const port = 9090
 const router = express.Router();
 const path = __dirname + '/public/';
 
@@ -34,12 +34,6 @@ app.use('/', router);
 
 // ———————————————————————————
 // Gestionar usuaris en una variable (caldrà fer-ho a la base de dades).
-let hash0 = crypto.createHash('md5').update("1234").digest("hex")
-let hash1 = crypto.createHash('md5').update("abcd").digest("hex")
-let users = [
-  {userName: 'user0', password: hash0, token: ''},
-  {userName: 'user1', password: hash1, token: ''}
-]
 
 // ————————————————————————————————
 // Inicialitzar objecte de shadows.
@@ -50,7 +44,7 @@ let shadows = new shadowsObj()
 var db = new database()
 db.init({
   host: "localhost",
-  port: 3306,
+  port: 8080,
   user: "root",
   password: "pwd",
   database: "users"
@@ -107,50 +101,47 @@ async function ajaxCall (req, res) {
   let objPost = req.body;
   let result = ""
 
-  // ——————————————————————————
-  // Simulate delay (1 second).
+  // Simulate delay (1 second)
   await new Promise(resolve => setTimeout(resolve, 1000));
 
-  // —————————————————————
-  // Processar la petició.
+  // Processar la petició
   switch (objPost.callType) {
       case 'actionCheckUserByToken':  result = await actionCheckUserByToken(objPost); break
       case 'actionLogout':            result = await actionLogout(objPost); break
       case 'actionLogin':             result = await actionLogin(objPost); break
       case 'actionSignUp':            result = await actionSignUp(objPost); break
+      case 'actionDeleteRow':           result = await actionDeleteRow(objPost); break
       default:
           result = {result: 'KO', message: 'Invalid callType'}
           break;
   }
 
-  // —————————————————————
-  // Retornar el resultat.
+  // Retornar el resultat
   res.send(result)
 }
 
 async function actionCheckUserByToken (objPost) {
   let tokenValue = objPost.token
-  
-  // ———————————————————————————————————————————————————————
-  // Si troba el token a les dades, retorna el nom d'usuari.
-  let user = users.find(u => u.token == tokenValue)
-  if (!user) {
+  // Si troba el token a les dades, retorna el nom d'usuari
+  let tokenDB = 'SELECT * from user where token='+tokenValue;
+  if (!tokenDB) {
       return {result: 'KO'}
   } else {
-      return {result: 'OK', userName: user.userName}
+      return {result: 'OK', userName: userName}
   }
 }
 
 async function actionLogout (objPost) {
   let tokenValue = objPost.token
-  
-  // ———————————————————————————————————————————————————————
-  // Si troba el token a les dades, retorna el nom d'usuari.
-  let user = users.find(u => u.token == tokenValue)
-  if (!user) {
-      return {result: 'OK'}
+  // Si troba el token a les dades, retorna el nom d'usuari
+  let nomDB = `select name from user where token='${tokenValue}'`;
+  rst = await db.query(nomDB)
+  if (rst[0]) {
+    let tokenDB = `UPDATE user SET token = '' where name="${rst[0].name}"`
+    rst2 = await db.query(tokenDB)
+    return {result: 'OK'}
   } else {
-      return {result: 'OK'}
+      return {result: 'KO'}
   }
 }
 
@@ -158,27 +149,30 @@ async function actionLogin (objPost) {
   let userName = objPost.userName
   let userPassword = objPost.userPassword
   let hash = crypto.createHash('md5').update(userPassword).digest("hex")
-
-  // ———————————————————————————
-  // Buscar l'usuari a les dades.
-  let user = users.find(u => u.userName == userName && u.password == hash)
-  if (!user) {
-      return {result: 'KO'}
-  } else {
+  let userDB = `SELECT name from user where name= '${userName}' and pwdHash='${hash}'`;
+  rst = await db.query(userDB)
+  // Buscar l'usuari a les dades
+  if (rst[0]) {
     let token = uuidv4()
-    user.token = token
-    return {result: 'OK', userName: user.userName, token: token}
+    let updateTokenDB = `UPDATE user SET token = '${token}' where name='${rst[0].name}'`
+    rst2 = await db.query(updateTokenDB)
+    return {result: 'OK', userName: userName, token: token}
+    
+  } else {
+    return {result: 'KO'}
   }
 }
 
 async function actionSignUp (objPost) {
   let userName = objPost.userName
   let userPassword = objPost.userPassword
+  let userMail = objPost.userMail
   let hash = crypto.createHash('md5').update(userPassword).digest("hex")
   let token = uuidv4()
-  let user = {userName: userName, password: hash, token: token}
-  users.push(user)
-  return {result: 'OK', userName: user.userName, token: token}
+  // Afegir l'usuari a les dades
+  let insertQuery = 'insert into user(name,mail,pwdHash,token) values ("'+userName+'","'+userMail+'","'+hash+'","'+token+'")'
+  db.query(insertQuery)
+  return {result: 'OK', userName: userName, token: token}
 }
 
 // AÑADIR FILA.
@@ -186,11 +180,11 @@ async function actionSignUp (objPost) {
 app.post('/submitForm', submitForm);
 async function submitForm(req, res) {
   let formData = req.body;
-  let query = `INSERT INTO user (ID, name, mail, pwdHash, token) VALUES (?, ?, ?, ?, ?)`;
-  let values = [formData.ID, formData.name, formData.mail, formData.pwdHash, formData.token];
-
+  let hash = crypto.createHash('md5').update(formData.pwdHash).digest("hex")
+  let query = `INSERT INTO user (name, mail, pwdHash) VALUES ("`+formData.name+`", "`+formData.mail+`", "`+hash+`")`;
+  db.query(query)
   try {
-    await db.query(query, values);
+    await db.query(query);
     res.send({ result: 'OK', message: 'Has creado una nueva fila.' });
   } catch (error) {
     console.error('Error al crear la fila en la base de datos:', error);
@@ -203,7 +197,7 @@ app.post('/deleteUser', deleteRow);
 async function deleteRow(req, res) {
   let deleteID = req.body.ID;
 
-  let query = `DELETE FROM user WHERE ID = ?`;
+  let query = `DELETE FROM user WHERE ID = `+deleteID+``;
 
   try {
     await db.query(query, [deleteID]);
