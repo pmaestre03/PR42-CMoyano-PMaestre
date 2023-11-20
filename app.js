@@ -177,12 +177,15 @@ async function actionSignUp (objPost) {
 
 // AÑADIR FILA.
 // Asegúrate de que esta ruta esté en tu archivo app.js
-app.post('/submitForm', submitForm);
-async function submitForm(req, res) {
-  let formData = req.body;
-  let hash = crypto.createHash('md5').update(formData.pwdHash).digest("hex")
-  let query = `INSERT INTO user (name, mail, pwdHash) VALUES ("`+formData.name+`", "`+formData.mail+`", "`+hash+`")`;
-  db.query(query)
+app.post('/submitForm', submitRow);
+async function submitRow(req, res) {
+  let editName = req.body.name_sub;
+  let editMail = req.body.mail_sub;
+  let editPwdHash = req.body.pwdHash_sub;
+
+  let hash = crypto.createHash('md5').update(editPwdHash).digest("hex")
+  let query = `INSERT INTO user (name, mail, pwdHash) VALUES ("`+editName+`", "`+editMail+`", "`+hash+`")`;
+  console.log(query);
   try {
     await db.query(query);
     res.send({ result: 'OK', message: 'Has creado una nueva fila.' });
@@ -200,7 +203,7 @@ async function deleteRow(req, res) {
   let query = `DELETE FROM user WHERE ID = `+deleteID+``;
 
   try {
-    await db.query(query, [deleteID]);
+    await db.query(query);
     res.send({ result: 'OK', message: 'Se ha eliminado la fila correctamente.' });
   } catch (error) {
     console.error('Error al eliminar la fila de la base de datos:', error);
@@ -211,16 +214,15 @@ async function deleteRow(req, res) {
 // EDITAR FILA.
 app.post('/editUser', editRow);
 async function editRow(req, res) {
-  let editID = req.body.ID;
+  let editID = req.body.id;
   let editName = req.body.name;
   let editMail = req.body.mail;
   let editPwdHash = req.body.pwdHash;
-  let editToken = req.body.token;
-
-  let query = `UPDATE user SET name=?, mail=?, pwdHash=?, token=? WHERE ID = ?`;
-
+  let hash = crypto.createHash('md5').update(editPwdHash).digest("hex")
+  let query = `UPDATE user SET name="`+editName+`", mail="`+editMail+`", pwdHash="`+hash+`" WHERE ID =`+editID+`;`;
+  console.log(query )
   try {
-    await db.query(query, [editName, editMail, editPwdHash, editToken, editID]);
+    await db.query(query);
     res.send({ result: 'OK', message: 'Se ha editado la fila correctamente.' });
   } catch (error) {
     console.error('Error al editar la fila en la base de datos:', error);

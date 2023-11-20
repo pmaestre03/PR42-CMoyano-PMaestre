@@ -30,20 +30,15 @@
             <!-- CREAR FILA -->
             <div id="crearFilaDiv">
                 <form id="userForm">
+                    <label for="submitName">Name:</label>
+                    <input type="text" id="submitName" name="submitName" required><br>
 
+                    <label for="submitMail">Mail:</label>
+                    <input type="text" id="submitMail" name="submitMail" required><br>
                 
-                    <label for="name">Name:</label>
-                    <input type="text" id="name" name="name" required><br>
-                
-                    <label for="mail">Mail:</label>
-                    <input type="text" id="mail" name="mail" required><br>
-                
-                    <label for="pwdHash">Password:</label>
-                    <input type="text" id="pwdHash" name="pwdHash" required><br>
-                
-
-                
-                    <button type="button" onclick="submitForm()">Submit</button>
+                    <label for="submitPassword">Password:</label>
+                    <input type="password" id="submitPassword" name="submitPassword" required><br>
+                    <button type="button" onclick="submitRow()">Submit</button>
                 </form>
             </div>
                   
@@ -62,39 +57,37 @@
                 <form id="editForm">
                     <label for="editID">ID:</label>
                     <input type="text" id="editID" name="editID" required><br>
-                
+                    
                     <label for="editName">Name:</label>
                     <input type="text" id="editName" name="editName" required><br>
                 
                     <label for="editMail">Mail:</label>
                     <input type="text" id="editMail" name="editMail" required><br>
                 
-                    <label for="editPwdHash">Password Hash:</label>
-                    <input type="text" id="editPwdHash" name="editPwdHash" required><br>
+                    <label for="editPwdHash">Password Hash:</label> 
+                    <input type="password" id="editPwdHash" name="editPwdHash" required><br>
                 
-                    <label for="editToken">Token:</label>
-                    <input type="text" id="editToken" name="editToken" required><br>
-                
-                    <button type="button" onclick="editRow()">Edit</button>
                   </form>
             </div>
                 
             <script>
-            function submitForm() {
-                var form = document.getElementById("userForm");
-                var formData = new FormData(form);
+            
+            function submitRow() {
+                var editName = document.getElementById("submitName").value;
+                var editMail = document.getElementById("submitMail").value;
+                var editPwdHash = document.getElementById("submitPassword").value;
 
                 fetch('/submitForm', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(Object.fromEntries(formData)),
+                    body: JSON.stringify({name_sub: submitName, mail_sub: submitMail, pwdHash_sub: submitPassword}),
                     })
                     .then(response => response.json())
                     .then(data => {
                         alert(data.message);
-                        form.reset();
+                        document.getElementById("userForm").reset();
                     })
                 .catch(error => console.error('Error:', error));
             }
@@ -123,14 +116,13 @@
                 var editName = document.getElementById("editName").value;
                 var editMail = document.getElementById("editMail").value;
                 var editPwdHash = document.getElementById("editPwdHash").value;
-                var editToken = document.getElementById("editToken").value;
 
                 fetch('/editUser', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ ID: editID, name: editName, mail: editMail, pwdHash: editPwdHash, token: editToken }),
+                    body: JSON.stringify({id: editID,name: editName, mail: editMail, pwdHash: editPwdHash}),
                     })
                     .then(response => response.json())
                     .then(data => {
@@ -139,6 +131,23 @@
                     })
                 .catch(error => console.error('Error:', error));
             }
+            var form = document.getElementById("editForm");   
+            document.getElementById("editID").addEventListener("input", function () {
+            function enviarFormulari() {
+                editRow();
+            }
+
+            var interval = 10000; // envia cada 5 segons
+            var enviaInterval = setInterval(enviarFormulari, interval);
+
+            document.getElementById("editID").addEventListener("focus", function () {
+                clearInterval(enviaInterval);
+            });
+
+            document.getElementById("editID").addEventListener("blur", function () {
+                enviaInterval = setInterval(enviarFormulari, interval);
+            });
+        });
         </script>                
         
         <style>
