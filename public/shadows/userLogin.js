@@ -209,8 +209,8 @@ class UserLogin extends HTMLElement {
                 token: tokenValue,
             }
             await this.callServer(requestData)
-        } 
-
+        }
+        document.getElementById("contenedor").style.display = "none"
         // Tan fa la resposta, esborrem les dades
         this.setUserInfo('', '')
         this.showView('viewLoginForm', 'initial')
@@ -232,6 +232,7 @@ class UserLogin extends HTMLElement {
         let resultData = await this.callServer(requestData)
         if (resultData.result == 'OK') {
             this.setUserInfo(resultData.userName, resultData.token)
+            document.getElementById("contenedor").style.display = "block"
             this.showView('viewInfo', 'logged')
         } else {
             // Esborrar el password

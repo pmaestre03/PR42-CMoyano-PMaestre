@@ -23,8 +23,7 @@
         </header>
 
         <user-login></user-login>
-        <div class="container">
-            <h2>Benvingut</h2>
+        <div class="container" id="contenedor">
             <h3>Crear fila</h3>
 
             <!-- CREAR FILA -->
@@ -67,15 +66,16 @@
                     <label for="editPwdHash">Password Hash:</label> 
                     <input type="password" id="editPwdHash" name="editPwdHash" required><br>
                 
+                    <button type="button" onclick="clean()">Clean Fields</button>
                   </form>
             </div>
                 
             <script>
             
             function submitRow() {
-                var editName = document.getElementById("submitName").value;
-                var editMail = document.getElementById("submitMail").value;
-                var editPwdHash = document.getElementById("submitPassword").value;
+                var submitName = document.getElementById("submitName").value;
+                var submitMail = document.getElementById("submitMail").value;
+                var submitPassword = document.getElementById("submitPassword").value;
 
                 fetch('/submitForm', {
                     method: 'POST',
@@ -127,7 +127,6 @@
                     .then(response => response.json())
                     .then(data => {
                         alert(data.message);
-                        document.getElementById("editForm").reset();
                     })
                 .catch(error => console.error('Error:', error));
             }
@@ -148,6 +147,9 @@
                 enviaInterval = setInterval(enviarFormulari, interval);
             });
         });
+        function clean() {
+            document.getElementById("editForm").reset();
+        }
         </script>                
         
         <style>
@@ -176,6 +178,7 @@
 
             .container{
                 margin: 50px;
+                display: none;
             }
 
             h2{
