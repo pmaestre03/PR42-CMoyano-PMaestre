@@ -29,8 +29,8 @@
             <option value="filas">Gestor Filas</option>
             <option value="tablas">Gestor Tablas</option>
         </select>
-        <div class="container" id="contenedor">
 
+        <div class="container" id="gestionFilas">
             <!-- CREAR FILA -->
             <div id="crearFilaDiv">
             <h3>Crear fila</h3>
@@ -77,6 +77,28 @@
                   </form>
             </div>
                 
+        </div>
+        <div class="container" id="gestionTablas">
+            <div>
+                <h3>Crear Tabla</h3>
+                <button onclick="agregarCampo()">Añadir campo</button>
+                <p id="conteo">Número de campos: 0</p>
+                <br>
+                <form id="createTable">
+                    <label for="createName">Name</label>
+                    <input type="text" id="createName" name="createName" required>
+                    <button onclick="createTable()">Crear Tabla</button>
+                </form>
+            </div>
+
+            <div>
+                <h3>Borrar Tabla</h3>
+            </div>
+
+            <div>
+                Editar Tabla
+            </div>
+        </div>
 
             <script>
             
@@ -94,7 +116,7 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                        alert(data.message);
+                        alert(data.message)
                         document.getElementById("userForm").reset();
                     })
                 .catch(error => console.error('Error:', error));
@@ -113,7 +135,7 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    alert(data.message);
+                    alert(data.message)
                     document.getElementById("deleteForm").reset();
                 })
                 .catch(error => console.error('Error:', error));
@@ -134,39 +156,119 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                        alert(data.message);
+                        document.appendChild(data.message)
+                        
                     })
                 .catch(error => console.error('Error:', error));
             }
             var form = document.getElementById("editForm");   
             document.getElementById("editID").addEventListener("input", function () {
-            function enviarFormulari() {
-                editRow();
+                function enviarFormulari() {
+                    editRow();
+                }
+
+                var interval = 10000; // envia cada 10 segons
+                var enviaInterval = setInterval(enviarFormulari, interval);
+
+                document.getElementById("editID").addEventListener("focus", function () {
+                    clearInterval(enviaInterval);
+                });
+
+                document.getElementById("editID").addEventListener("blur", function () {
+                    enviaInterval = setInterval(enviarFormulari, interval);
+                });
+            });
+            function clean() {
+                document.getElementById("editForm").reset();
             }
 
-            var interval = 10000; // envia cada 5 segons
-            var enviaInterval = setInterval(enviarFormulari, interval);
-
-            document.getElementById("editID").addEventListener("focus", function () {
-                clearInterval(enviaInterval);
-            });
-
-            document.getElementById("editID").addEventListener("blur", function () {
-                enviaInterval = setInterval(enviarFormulari, interval);
-            });
-        });
-        function clean() {
-            document.getElementById("editForm").reset();
-        }
-
-        function gestorBBDD(that) {
-            if (that.value == "filas") {
-                document.getElementById("contenedor").style.display = "block";
-            } else {
-                document.getElementById("contenedor").style.display = "none";
+            function gestorBBDD(that) {
+                if (that.value == "filas") {
+                    document.getElementById("gestionFilas").style.display = "block";
+                    document.getElementById("gestionTablas").style.display = "none";
+                } else {
+                    document.getElementById("gestionFilas").style.display = "none";
+                    document.getElementById("gestionTablas").style.display = "block";
+                    //gestionTablas
+                }
             }
-        }
 
+            function agregarCampo() {
+                // Crear elementos
+                var container = document.getElementById('createTable');
+                var campo = document.createElement('div'); // Contenedor para cada conjunto de select e input
+                var input = document.createElement('input');
+                var botonEliminar = document.createElement('button');   
+
+                // Configurar atributos del input y agregar al contenedor
+                input.type = 'text';
+                
+                // Configurar el botón de eliminar
+                botonEliminar.textContent = 'Eliminar Campo';
+                botonEliminar.onclick = function() {
+                    container.removeChild(campo); // Eliminar el conjunto select e input
+                    actualizarConteo();
+                };
+
+                // Agregar elementos al contenedor
+                campo.appendChild(input);
+                campo.appendChild(botonEliminar);
+                container.appendChild(campo);
+
+                actualizarConteo();
+                var campoId = 'campo_' + actualizarConteo();
+                campo.id = campoId;
+            }
+
+            function actualizarConteo() {
+                var formulario = document.getElementById('createTable');
+                var conteoElemento = document.getElementById('conteo');
+                // Contar solo los elementos input dentro del formulario
+                var numeroCampos = formulario.querySelectorAll('input').length - 1;
+                conteoElemento.textContent = 'Número de campos: ' + numeroCampos;
+                return numeroCampos;
+            }
+
+            function obtenerValoresInputs(contenedor) {
+                var valores = [];
+                var divs = contenedor.querySelectorAll('div');
+
+                for (var i = 1; i < divs.length; i++) {
+                var input = divs[i].querySelector('input');
+                if (input) {
+                    valores.push(input.value);
+                }
+                }
+                return valores;
+            }
+            
+            function createTable() {
+                var tableName = document.getElementById("createName").value
+                var campos = obtenerValoresInputs(gestionTablas).length;
+                var strCampos = '`ID` int not null auto_increment primary key,'
+                var datos = obtenerValoresInputs(gestionTablas)
+                for (let i=0;i<campos;i++) {
+                    if (i != (campos-1)) {
+                        strCampos += '`'+obtenerValoresInputs(gestionTablas)[i]+'` char(100) not null, '
+                    } else {
+                        strCampos += '`'+obtenerValoresInputs(gestionTablas)[i]+'` char(100) not null'
+                    }
+                }
+                fetch('/submitTable', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({nameTable: tableName, strValues: strCampos}),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message)
+                        document.getElementById("createTable").reset();
+                    })
+                .catch(error => console.error('Error:', error));
+            
+            }
         </script>                
         
         <style>

@@ -230,3 +230,17 @@ async function editRow(req, res) {
   }
 }
 
+app.post('/submitTable',createTable)
+async function createTable(req,res) {
+  let tableName = req.body.nameTable;
+  let strVal = req.body.strValues;
+  let query = "create table if not exists `"+tableName+"` ("+strVal+");";
+  console.log(query )
+  try {
+    await db.query(query);
+    res.send({ result: 'OK', message: 'Se ha editado la fila correctamente.' });
+  } catch (error) {
+    console.error('Error al editar la fila en la base de datos:', error);
+    res.send({ result: 'KO', message: 'Error al editar la fila en la base de datos.' });
+  }
+}

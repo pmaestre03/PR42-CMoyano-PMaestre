@@ -214,7 +214,9 @@ class UserLogin extends HTMLElement {
         this.setUserInfo('', '')
         this.showView('viewLoginForm', 'initial')
         document.getElementById("editar").style.display = "none"
-        document.getElementById("container").style.display = "none"
+        document.getElementById("gestionFilas").style.display = "none"
+        document.getElementById("gestionTablas").style.display = "none"
+        
     }
 
     async actionLogin() {
