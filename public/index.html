@@ -100,11 +100,13 @@
                 </form>
             </div>
 
+            <!-- Editar -->
             <div>
-                <h3>Editar Tabla</h3>
-                
+                <h3>Editar taula</h3>
                 <form id="editTable">
-
+                    <label for="editTableName">Nom de la taula a editar:</label>
+                    <input type="text" id="editTableName" name="editTableName" required>
+                    <button type="button" onclick="editTable()">Editar</button>
                 </form>
             </div>
         </div>
@@ -277,7 +279,6 @@
                         document.getElementById("createTable").reset();
                     })
                 .catch(error => console.error('Error:', error));
-            
             }
 
             function eliminarTabla() {
@@ -293,11 +294,27 @@
                     .then(response => response.json())
                     .then(data => {
                         document.getElementById('mensajeInformativo').innerText = data.message
-                        //alert(data.message)
                         document.getElementById("deleteTable").reset();
                     })
                 .catch(error => console.error('Error:', error));
             }
+
+            // EDITAR TAULA.
+            function editTable() {
+                var tableName = document.getElementById("editTableName").value;
+                var strChanges = obtenerValoresInputs(gestionTablas).join(", ");
+                fetch('/modTable', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nameTable: tableName, strChanges: strChanges }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    document.getElementById("editTableForm").reset();
+                }) .catch(error => console.error('Error:', error)); }
         </script>                
         
         <style>

@@ -246,9 +246,21 @@ async function createTable(req,res) {
   }
 }
 
+// MODIFICAR TAULA.
+app.post('/modTable', editTable)
+async function editTable(req,res) {
+  let tableName = req.body.nameTable;
+  let strChanges = req.body.strChanges;
+  let query = "ALTER TABLE " + tableName + " " + strChanges + ";";
+  console.log(query);
 
-
-
+  try {
+    await db.query(query);
+    res.send({ result: 'OK', message: 'S\'ha modificat la taula correctament!' });
+  } catch (error) {
+    console.error('Error al modificar la taula a la base de dades:', error);
+    res.send({ result: 'KO', message: 'Error al modificar la taula a la base de dades.' });
+  }}
 
 app.get('/deleteTabla',eliminarTabla)
 async function eliminarTabla(req,res) {
