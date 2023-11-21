@@ -29,12 +29,12 @@
             <option value="filas">Gestor Filas</option>
             <option value="tablas">Gestor Tablas</option>
         </select>
-
+        <h2 id="mensajeInformativo"></h2>
         <div class="container" id="gestionFilas">
             <!-- CREAR FILA -->
             <div id="crearFilaDiv">
             <h3>Crear fila</h3>
-
+            
                 <form id="userForm">
                     <label for="submitName">Name:</label>
                     <input type="text" id="submitName" name="submitName" required><br>
@@ -79,25 +79,33 @@
                 
         </div>
         <div class="container" id="gestionTablas">
-            <div>
+            <div id="crearTable">
                 <h3>Crear Tabla</h3>
-                <button onclick="agregarCampo()">Añadir campo</button>
                 <p id="conteo">Número de campos: 0</p>
                 <br>
                 <form id="createTable">
                     <label for="createName">Name</label>
                     <input type="text" id="createName" name="createName" required>
                     <button onclick="createTable()">Crear Tabla</button>
+                    <button onclick="agregarCampo()">Añadir campo</button>
                 </form>
             </div>
 
             <div>
                 <h3>Borrar Tabla</h3>
-                
+                <form id="deleteTable">
+                    <label for="tabla_borrar">Que tabla quieres borrar?</label>
+                    <input type="text" name="tabla_borrar" id="tabla_borrar">
+                    <button onclick="eliminarTabla()">Eliminar Tabla</button>
+                </form>
             </div>
 
             <div>
-                Editar Tabla
+                <h3>Editar Tabla</h3>
+                
+                <form id="editTable">
+
+                </form>
             </div>
         </div>
 
@@ -117,7 +125,8 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                        alert(data.message)
+
+                        document.getElementById('mensajeInformativo').innerText = data.message
                         document.getElementById("userForm").reset();
                     })
                 .catch(error => console.error('Error:', error));
@@ -136,7 +145,7 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    alert(data.message)
+                    document.getElementById('mensajeInformativo').innerText = data.message
                     document.getElementById("deleteForm").reset();
                 })
                 .catch(error => console.error('Error:', error));
@@ -157,7 +166,7 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                        document.appendChild(data.message)
+                        document.getElementById('mensajeInformativo').innerText = data.message
                         
                     })
                 .catch(error => console.error('Error:', error));
@@ -264,11 +273,30 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                        alert(data.message)
+                        document.getElementById('mensajeInformativo').innerText = data.message
                         document.getElementById("createTable").reset();
                     })
                 .catch(error => console.error('Error:', error));
             
+            }
+
+            function eliminarTabla() {
+                var nombreTabla = document.getElementById('tabla_borrar').value
+
+                fetch('/deleteTabla', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({nameTable: nombreTabla}),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('mensajeInformativo').innerText = data.message
+                        //alert(data.message)
+                        document.getElementById("deleteTable").reset();
+                    })
+                .catch(error => console.error('Error:', error));
             }
         </script>                
         

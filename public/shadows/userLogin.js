@@ -267,6 +267,7 @@ class UserLogin extends HTMLElement {
         if (resultData.result == 'OK') {
             this.setUserInfo(resultData.userName,resultData.userMail, resultData.token)
             this.showView('viewInfo', 'logged')
+            document.getElementById("editar").style.display = "block"
         } else {
             // Esborrar el password
             refPassword.value = ""
