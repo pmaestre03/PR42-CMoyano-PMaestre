@@ -231,7 +231,7 @@ async function editRow(req, res) {
 }
 
 // Crear Tabla
-app.get('/submitTable',createTable)
+app.post('/submitTable',createTable)
 async function createTable(req,res) {
   let tableName = req.body.nameTable;
   let strVal = req.body.strValues;
@@ -250,7 +250,7 @@ async function createTable(req,res) {
 
 
 
-app.get('/deleteTabla',eliminarTabla)
+app.post('/deleteTabla',eliminarTabla)
 async function eliminarTabla(req,res) {
   let tableName = req.body.nameTable;
   let query = "drop table if exists `"+tableName+"`;";

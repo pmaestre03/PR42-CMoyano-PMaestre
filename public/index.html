@@ -11,7 +11,7 @@
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i&display=swap" rel="stylesheet">
         <link href="/style.css" rel="stylesheet">
         <link rel="stylesheet" href="/style.css">
-        <script src="/script.js" defer></script>
+        <!--<script src="/script.js" defer></script>-->
         <script src="/shadows.js" defer></script>
         <meta author="text" content="Pau Maestre i Claudia Moyano (2n DAW)">
         <link rel="shortcut icon" href="" />
@@ -83,7 +83,7 @@
                 <h3>Crear Tabla</h3>
                 <p id="conteo">Número de campos: 0</p>
                 <br>
-                <form id="createTable">
+                <form id="createTables">
                     <label for="createName">Name</label>
                     <input type="text" id="createName" name="createName" required>
                     <button onclick="createTable()">Crear Tabla</button>
@@ -205,7 +205,7 @@
 
             function agregarCampo() {
                 // Crear elementos
-                var container = document.getElementById('createTable');
+                var container = document.getElementById('createTables');
                 var campo = document.createElement('div'); // Contenedor para cada conjunto de select e input
                 var input = document.createElement('input');
                 var botonEliminar = document.createElement('button');   
@@ -228,10 +228,11 @@
                 actualizarConteo();
                 var campoId = 'campo_' + actualizarConteo();
                 campo.id = campoId;
+                campo.querySelectorAll('input[required]')
             }
 
             function actualizarConteo() {
-                var formulario = document.getElementById('createTable');
+                var formulario = document.getElementById('createTables');
                 var conteoElemento = document.getElementById('conteo');
                 // Contar solo los elementos input dentro del formulario
                 var numeroCampos = formulario.querySelectorAll('input').length - 1;
@@ -254,9 +255,9 @@
             
             function createTable() {
                 var tableName = document.getElementById("createName").value
-                var campos = obtenerValoresInputs(gestionTablas).length;
+                var campos = obtenerValoresInputs(crearTable).length;
                 var strCampos = '`ID` int not null auto_increment primary key,'
-                var datos = obtenerValoresInputs(gestionTablas)
+                var datos = obtenerValoresInputs(crearTable)
                 for (let i=0;i<campos;i++) {
                     if (i != (campos-1)) {
                         strCampos += '`'+obtenerValoresInputs(gestionTablas)[i]+'` char(100) not null, '
@@ -264,6 +265,7 @@
                         strCampos += '`'+obtenerValoresInputs(gestionTablas)[i]+'` char(100) not null'
                     }
                 }
+                console.log(strCampos)
                 fetch('/submitTable', {
                     method: 'POST',
                     headers: {
@@ -274,7 +276,7 @@
                     .then(response => response.json())
                     .then(data => {
                         document.getElementById('mensajeInformativo').innerText = data.message
-                        document.getElementById("createTable").reset();
+                        document.getElementById("createTables").reset();
                     })
                 .catch(error => console.error('Error:', error));
             
