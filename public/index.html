@@ -103,8 +103,15 @@
             <div>
                 <h3>Editar Tabla</h3>
                 
-                <form id="editTable">
+                <form id="updateTable">
+                    <label for="tabla_modificar">Nombre Actual de la Tabla:</label>
+                    <input type="text" id="currentName" placeholder="Nombre actual de la tabla">
 
+                    
+                    <label for="newTableNameInput">Nuevo Nombre de la Tabla:</label>
+                    <input type="text" id="newTableNameInput" placeholder="Nuevo nombre de la tabla">
+                    
+                    <button type="button" onclick="actualizarTabla()">Actualizar</button>
                 </form>
             </div>
         </div>
@@ -251,8 +258,7 @@
                 }
                 }
                 return valores;
-            }
-            
+            } 
 
             function createTable() {
                 var tableName = document.getElementById("createName").value
@@ -276,8 +282,33 @@
                         document.getElementById("createTables").reset();
                     })
                 .catch(error => console.error('Error:', error));
-            
             }
+
+            function updateTableName() {
+                var nombreTabla = document.getElementById('tabla_modificar').value
+                var currentName = document.getElementById("currentName").value;
+                var newName = document.getElementById("newTableNameInput").value;
+
+                fetch('/modTable', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        currentName: currentName,
+                        newName: newName,
+                        userName: userName,
+                        token: token
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('mensajeInformativo').innerText = data.message;
+                    // Puedes realizar acciones adicionales después de actualizar la tabla si es necesario
+                })
+                .catch(error => console.error('Error:', error));
+            }
+
 
             function eliminarTabla() {
                 var nombreTabla = document.getElementById('tabla_borrar').value

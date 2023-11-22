@@ -251,8 +251,22 @@ async function createTable(req,res) {
   }
 }
 
-
-
+app.post('/modTable', updateTableName);
+async function updateTableName(req, res) {
+    let tableName = req.body.nameTable;
+    let userName = req.body.userName;
+    let token = req.body.token;
+    let query = "ALTER TABLE `" + currentName + "` RENAME TO `" + newName + "`;";
+    console.log(query);
+    
+    try {
+        await db.query(query);
+        res.send({ result: 'OK', message: 'Se ha eliminado la tabla correctamente.', userName: userName, token: token });
+    } catch (error) {
+        console.error('Error al editar la fila en la base de datos:', error);
+        res.send({ result: 'KO', message: 'Error al eliminar la tabla en la base de datos.' });
+    }
+}
 app.post('/deleteTabla',eliminarTabla)
 async function eliminarTabla(req,res) {
   let tableName = req.body.nameTable;
@@ -268,4 +282,3 @@ async function eliminarTabla(req,res) {
     res.send({ result: 'KO', message: 'Error al eliminar la tabla en la base de datos.' });
   }
 }
-
