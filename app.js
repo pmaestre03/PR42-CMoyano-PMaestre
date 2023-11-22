@@ -127,6 +127,7 @@ async function actionCheckUserByToken (objPost) {
   if (!tokenDB) {
       return {result: 'KO'}
   } else {
+      let userName = "";
       return {result: 'OK', userName: userName}
   }
 }
@@ -230,34 +231,38 @@ async function editRow(req, res) {
   }
 }
 
+
 // Crear Tabla
 app.post('/submitTable',createTable)
 async function createTable(req,res) {
   let tableName = req.body.nameTable;
   let strVal = req.body.strValues;
+  let userName = req.userName;
+  let token = req.body.token;
   let query = "create table if not exists `"+tableName+"` ("+strVal+");";
   console.log(query)
   try {
     await db.query(query);
-    res.send({ result: 'OK', message: 'Se ha creado la tabla correctamente.' });
+    res.send({ result: 'OK', message: 'Se ha creado la tabla correctamente.', userName: userName, token: token});
   } catch (error) {
     console.error('Error al editar la fila en la base de datos:', error);
-    res.send({ result: 'KO', message: 'Error al crear la tabla en la base de datos.' });
+    res.send({ result: 'KO', message: 'Error al crear la tabla en la base de datos.'});
+    //return {result: 'OK', userName: userName, token: token}
   }
 }
-
-
 
 
 
 app.post('/deleteTabla',eliminarTabla)
 async function eliminarTabla(req,res) {
   let tableName = req.body.nameTable;
+  let userName = req.body.userName;
+  let token = req.body.token;
   let query = "drop table if exists `"+tableName+"`;";
   console.log(query)
   try {
     await db.query(query);
-    res.send({ result: 'OK', message: 'Se ha eliminado la tabla correctamente.' });
+    res.send({ result: 'OK', message: 'Se ha eliminado la tabla correctamente.', userName: userName, token: token});
   } catch (error) {
     console.error('Error al editar la fila en la base de datos:', error);
     res.send({ result: 'KO', message: 'Error al eliminar la tabla en la base de datos.' });

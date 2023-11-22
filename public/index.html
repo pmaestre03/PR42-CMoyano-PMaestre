@@ -244,7 +244,7 @@
                 var valores = [];
                 var divs = contenedor.querySelectorAll('div');
 
-                for (var i = 1; i < divs.length; i++) {
+                for (var i = 0; i < divs.length; i++) {
                 var input = divs[i].querySelector('input');
                 if (input) {
                     valores.push(input.value);
@@ -253,17 +253,14 @@
                 return valores;
             }
             
+
             function createTable() {
                 var tableName = document.getElementById("createName").value
-                var campos = obtenerValoresInputs(crearTable).length;
-                var strCampos = '`ID` int not null auto_increment primary key,'
-                var datos = obtenerValoresInputs(crearTable)
+                var campos = obtenerValoresInputs(createTables).length;
+                var strCampos = '`ID` int not null auto_increment primary key'
+                var datos = obtenerValoresInputs(createTables)
                 for (let i=0;i<campos;i++) {
-                    if (i != (campos-1)) {
-                        strCampos += '`'+obtenerValoresInputs(gestionTablas)[i]+'` char(100) not null, '
-                    } else {
-                        strCampos += '`'+obtenerValoresInputs(gestionTablas)[i]+'` char(100) not null'
-                    }
+                        strCampos += ',`'+obtenerValoresInputs(createTables)[i]+'` char(100) not null '
                 }
                 console.log(strCampos)
                 fetch('/submitTable', {
